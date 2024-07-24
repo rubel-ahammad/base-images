@@ -1,0 +1,7 @@
+tasks.register('dockerBuildImage', Exec) {
+    group 'localdev/build'
+    workingDir "$projectDir/src/main/docker"
+    commandLine 'bash', '-c', """\
+        docker buildx bake glibc
+    """.stripIndent()
+}

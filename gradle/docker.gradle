@@ -1,0 +1,64 @@
+ext {
+    if (!project.hasProperty('build.version') && !project.hasProperty('docker.push.registry')) {
+        setProperty('docker.push.registry', 'docker.io')
+    }
+
+    dockerPushRegistry = { ->
+        return project.hasProperty('docker.push.registry') ? project.property('docker.push.registry') : 'ghcr.io'
+    }
+
+    dockerPushRepository = { String name ->
+        return "ideascale/${name}"
+    }
+
+    dockerPushImageUrl = { String name, String tag ->
+        def registry = ext.dockerPushRegistry()
+        def repository = ext.dockerPushRepository(name)
+        return "${registry}/${repository}:${tag}"
+    }
+
+    dockerPushImageUrls = { String name ->
+        def urls = []
+        urls.add(ext.dockerPushImageUrl(name, version))
+
+        if (version.toString().matches(/^\d+\.\d+\.\d+$/)) {
+            urls.add(ext.dockerPushImageUrl(name, 'latest'))
+
+            def arch = ext.dockerArch()
+            urls = urls.collect { url -> "${url}-${arch}" } as Iterable<? extends String>
+        }
+
+        return urls
+    }
+
+    dockerCredentials = { registry, writeAccess = false ->
+        def credentials = [:]
+        def githubTokenKey = writeAccess ? 'github.publish.token' : 'github.token'
+        if ((registry == 'ghcr.io') && project.hasProperty('github.username') && project.hasProperty(githubTokenKey)) {
+            credentials.put('url', 'ghcr.io')
+            credentials.put('username', project.property('github.username'))
+            credentials.put('password', project.property(githubTokenKey))
+        } else if (writeAccess && project.hasProperty('docker.push.registry') && (registry == project.property('docker.push.registry')) && project.hasProperty('docker.push.username') && project.hasProperty('docker.push.password')) {
+            credentials.put('url', registry)
+            credentials.put('username', project.property('docker.push.username'))
+            credentials.put('password', project.property('docker.push.password'))
+        } else if (project.hasProperty("registry.${registry}.url") && project.hasProperty("registry.${registry}.username") && project.hasProperty("registry.${registry}.password")) {
+            credentials.put('url', project.property("registry.${registry}.url"))
+            credentials.put('username', project.property("registry.${registry}.username"))
+            credentials.put('password', project.property("registry.${registry}.password"))
+        }
+        return credentials
+    }
+
+    dockerPushRegistryCredentials = { ->
+        return ext.dockerCredentials(ext.dockerPushRegistry(), true)
+    }
+
+    dockerArch = { ->
+        return project.hasProperty('docker.arch') ? project.property('docker.arch') : System.getProperty('os.arch').contains('aarch64') ? 'arm64' : 'amd64'
+    }
+
+    dockerPlatform = { ->
+        return "linux/${ext.dockerArch()}"
+    }
+}
