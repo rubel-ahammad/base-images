@@ -1,0 +1,8 @@
+token: PRO_TOKEN
+enable_services:
+  - esm-apps
+  - esm-infra
+  - fips
+  - fips-updates
+  - livepatch
+  - usg
