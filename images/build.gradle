@@ -5,8 +5,6 @@ subprojects {
         group 'localdev/build'
 
         var tags = dockerPushImageUrls(project.name).collect { "--set *.tags=$it" }
-        println(tags.join(' '))
-
         workingDir "$projectDir/src/main/docker"
         commandLine 'bash', '-c', """\
             docker buildx bake ${project.name} ${tags.join(' ')}
