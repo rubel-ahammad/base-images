@@ -13,4 +13,4 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get install -y openssl \
     # Finally, we clean up
     && apt-get purge --auto-remove -y ubuntu-advantage-tools \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
