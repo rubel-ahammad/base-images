@@ -19,11 +19,12 @@ RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 WORKDIR /rootfs
 RUN chisel cut --release ubuntu-$UBUNTU_RELEASE --root /rootfs \
-   base-files_base \
-   base-files_release-info \
-   ca-certificates_data \
-   libgcc-s1_libs \
-   libc6_libs
+    base-files_base \
+    base-files_release-info \
+    ca-certificates_data \
+    libgcc-s1_libs \
+    libc6_libs \
+    openssl_config
 
 FROM scratch
 COPY --from=builder /rootfs /
