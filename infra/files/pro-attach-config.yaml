@@ -4,5 +4,4 @@ enable_services:
   - esm-infra
   - fips
   - fips-updates
-  - livepatch
   - usg
