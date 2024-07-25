@@ -1,5 +1,6 @@
 allprojects {
     apply plugin: 'base'
+    version = project.hasProperty('build.version') ? project.property('build.version') : '0.0.0-local'
 }
 
 wrapper {

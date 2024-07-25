@@ -1,5 +1,5 @@
 ARG UBUNTU_RELEASE=20.04
-ARG CHISEL_RELEASE=v0.10.0
+ARG CHISEL_RELEASE=0.10.0
 
 FROM ubuntu:${UBUNTU_RELEASE} as builder
 ARG UBUNTU_RELEASE
@@ -14,7 +14,7 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-ADD https://github.com/canonical/chisel/releases/download/$CHISEL_RELEASE/chisel_${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
+ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_RELEASE/chisel_v${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 WORKDIR /rootfs

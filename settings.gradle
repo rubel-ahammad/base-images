@@ -1,3 +1,4 @@
 rootProject.name = 'base-images'
 
-include 'glibc'
+include ':images:glibc',
+    ':images:jre17'

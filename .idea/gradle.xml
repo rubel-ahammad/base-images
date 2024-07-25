@@ -8,7 +8,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/glibc" />
+            <option value="$PROJECT_DIR$/images" />
+            <option value="$PROJECT_DIR$/images/glibc" />
+            <option value="$PROJECT_DIR$/images/jre17" />
           </set>
         </option>
       </GradleProjectSettings>
