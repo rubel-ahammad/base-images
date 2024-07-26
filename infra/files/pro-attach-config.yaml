@@ -2,6 +2,6 @@ token: PRO_TOKEN
 enable_services:
   - esm-apps
   - esm-infra
-  - fips
+#  - fips # Requires Ubuntu 20.04
   - fips-updates
   - usg

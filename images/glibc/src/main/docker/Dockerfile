@@ -1,4 +1,4 @@
-ARG UBUNTU_VERSION=20.04
+ARG UBUNTU_VERSION=22.04
 ARG CHISEL_VERSION=0.10.0
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
@@ -13,8 +13,9 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get install --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
     && pro attach --attach-config /run/secrets/pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
-    && apt-get upgrade -y \
-    && apt-get clean -y \
+    && apt-get upgrade -y
+
+RUN apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
@@ -27,7 +28,8 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     ca-certificates_data \
     libgcc-s1_libs \
     libc6_libs \
-    openssl_config
+    openssl_config \
+    zlib1g_libs
 
 FROM scratch
 COPY --from=builder /rootfs /
