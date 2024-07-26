@@ -5,12 +5,13 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="temurin-21" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/images" />
             <option value="$PROJECT_DIR$/images/glibc" />
-            <option value="$PROJECT_DIR$/images/jre17" />
+            <option value="$PROJECT_DIR$/images/jre" />
           </set>
         </option>
       </GradleProjectSettings>

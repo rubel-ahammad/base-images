@@ -1,17 +1,19 @@
-ARG UBUNTU_RELEASE=20.04
+ARG UBUNTU_VERSION=20.04
 ARG USER=app
 ARG UID=101
 ARG GROUP=app
 ARG GID=101
-ARG CHISEL_RELEASE=0.10.0
+ARG JAVA_VERSION=21
+ARG CHISEL_VERSION=0.10.0
 
-FROM ubuntu:${UBUNTU_RELEASE} as builder
-ARG UBUNTU_RELEASE
+FROM ubuntu:${UBUNTU_VERSION} as builder
+ARG UBUNTU_VERSION
 ARG USER
 ARG UID
 ARG GROUP
 ARG GID
-ARG CHISEL_RELEASE
+ARG JAVA_VERSION
+ARG CHISEL_VERSION
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
@@ -24,11 +26,11 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get upgrade -y \
     && apt-get install -y ca-certificates-java \
       binutils \
-      openjdk-17-jdk \
+      openjdk-${JAVA_VERSION}-jdk \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_RELEASE/chisel_v${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
+ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 RUN jlink --no-header-files --no-man-pages --strip-debug \
@@ -59,7 +61,7 @@ RUN mkdir -p /rootfs \
         zlib1g_libs \
         libgraphite2-3_libs \
         libglib2.0-0_core \
-        base-files_bin \
+        base-files_bin
 
 RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
     && mkdir -p /rootfs/etc \

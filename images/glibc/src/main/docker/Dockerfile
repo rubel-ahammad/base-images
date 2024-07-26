@@ -1,9 +1,9 @@
-ARG UBUNTU_RELEASE=20.04
-ARG CHISEL_RELEASE=0.10.0
+ARG UBUNTU_VERSION=20.04
+ARG CHISEL_VERSION=0.10.0
 
-FROM ubuntu:${UBUNTU_RELEASE} as builder
-ARG UBUNTU_RELEASE
-ARG CHISEL_RELEASE
+FROM ubuntu:${UBUNTU_VERSION} as builder
+ARG UBUNTU_VERSION
+ARG CHISEL_VERSION
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
@@ -17,11 +17,11 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_RELEASE/chisel_v${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
+ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 WORKDIR /rootfs
-RUN chisel cut --release ubuntu-$UBUNTU_RELEASE --root /rootfs \
+RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     base-files_base \
     base-files_release-info \
     ca-certificates_data \
