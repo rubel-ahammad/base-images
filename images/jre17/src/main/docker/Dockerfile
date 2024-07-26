@@ -30,6 +30,7 @@ RUN --mount=type=secret,id=pro-attach-config \
 
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_RELEASE/chisel_v${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
+
 RUN jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
 java.base,java.datatransfer,java.desktop,java.instrument,\
@@ -49,6 +50,7 @@ jdk.jdwp.agent \
 
 WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
+
 RUN mkdir -p /rootfs \
     && chisel cut --root /rootfs \
         libc6_libs \
@@ -57,7 +59,8 @@ RUN mkdir -p /rootfs \
         zlib1g_libs \
         libgraphite2-3_libs \
         libglib2.0-0_core \
-        base-files_bin
+        base-files_bin \
+
 RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
     && mkdir -p /rootfs/etc \
     && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
@@ -70,6 +73,7 @@ ARG USER
 ARG UID
 ARG GID
 USER $UID:$GID
+
 COPY --from=builder /rootfs /
 # Workaround for https://github.com/moby/moby/issues/38710
 COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER
