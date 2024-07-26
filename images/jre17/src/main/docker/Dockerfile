@@ -14,6 +14,7 @@ ARG GID
 ARG CHISEL_RELEASE
 ARG TARGETARCH
 
+SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
     apt-get update \
     # Required to talk to the Ubuntu Pro authentication server securely.
@@ -27,30 +28,27 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_RELEASE/chisel_v${CHISEL_RELEASE}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
-
 RUN jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
-    java.base,java.datatransfer,java.desktop,java.instrument,\
-    java.logging,java.management,java.management.rmi,java.naming,\
-    java.prefs,java.rmi,java.security.sasl,java.xml,jdk.incubator.foreign,\
-    jdk.incubator.vector,jdk.internal.vm.ci,jdk.jfr,jdk.management,\
-    jdk.management.jfr,jdk.management.agent,jdk.net,jdk.nio.mapmode,\
-    jdk.sctp,jdk.unsupported,jdk.naming.rmi,java.se,java.net.http,\
-    java.scripting,java.security.jgss,java.smartcardio,java.sql,\
-    java.sql.rowset,java.transaction.xa,java.xml.crypto,jdk.accessibility,\
-    jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.dynalink,jdk.httpserver,\
-    jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.security.auth,\
-    jdk.security.jgss,jdk.xml.dom,jdk.zipfs,java.compiler,\
-    jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,\
-    jdk.jdwp.agent \
-        --output /opt/java
+java.base,java.datatransfer,java.desktop,java.instrument,\
+java.logging,java.management,java.management.rmi,java.naming,\
+java.prefs,java.rmi,java.security.sasl,java.xml,jdk.incubator.foreign,\
+jdk.incubator.vector,jdk.internal.vm.ci,jdk.jfr,jdk.management,\
+jdk.management.jfr,jdk.management.agent,jdk.net,jdk.nio.mapmode,\
+jdk.sctp,jdk.unsupported,jdk.naming.rmi,java.se,java.net.http,\
+java.scripting,java.security.jgss,java.smartcardio,java.sql,\
+java.sql.rowset,java.transaction.xa,java.xml.crypto,jdk.accessibility,\
+jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.dynalink,jdk.httpserver,\
+jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.security.auth,\
+jdk.security.jgss,jdk.xml.dom,jdk.zipfs,java.compiler,\
+jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,\
+jdk.jdwp.agent \
+    --output /opt/java
 
 WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
-
 RUN mkdir -p /rootfs \
     && chisel cut --root /rootfs \
         libc6_libs \
