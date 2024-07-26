@@ -3,20 +3,20 @@ apply from: "${rootProject.projectDir}/gradle/docker.gradle"
 tasks.register('dockerBuildImageJre17', Exec) {
     group 'localdev/build'
 
-    var tags = dockerPushImageUrls('jre17').collect { "--set *.tags=$it" }
+    var tags = dockerPushImageUrls('jre-17').collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
     commandLine 'bash', '-c', """\
-        docker buildx bake jre17 ${tags.join(' ')}
+        docker buildx bake jre-17 ${tags.join(' ')}
     """.stripIndent()
 }
 
 tasks.register('dockerBuildImageJre21', Exec) {
     group 'localdev/build'
 
-    var tags = dockerPushImageUrls("jre21").collect { "--set *.tags=$it" }
+    var tags = dockerPushImageUrls("jre-21").collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
     commandLine 'bash', '-c', """\
-        docker buildx bake jre21 ${tags.join(' ')}
+        docker buildx bake jre-21 ${tags.join(' ')}
     """.stripIndent()
 }
 
