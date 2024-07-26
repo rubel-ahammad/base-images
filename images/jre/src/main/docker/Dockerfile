@@ -35,10 +35,10 @@ RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 RUN jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
-java.base,java.datatransfer,java.desktop,java.instrument,\
+java.base,java.datatransfer,java.instrument,\
 java.logging,java.management,java.management.rmi,java.naming,\
-java.prefs,java.rmi,java.security.sasl,java.xml,jdk.incubator.foreign,\
-jdk.incubator.vector,jdk.internal.vm.ci,jdk.jfr,jdk.management,\
+java.prefs,java.rmi,java.security.sasl,java.xml,\
+jdk.internal.vm.ci,jdk.jfr,jdk.management,\
 jdk.management.jfr,jdk.management.agent,jdk.net,jdk.nio.mapmode,\
 jdk.sctp,jdk.unsupported,jdk.naming.rmi,java.se,java.net.http,\
 java.scripting,java.security.jgss,java.smartcardio,java.sql,\
