@@ -7,14 +7,14 @@ variable "TAG" {
 }
 
 target "jre" {
-  name = "jre-${version}"
+  name = "jre-${java_version}"
   matrix = {
-    version = ["17", "21"]
+    java_version = ["17", "21"]
   }
   args = {
     UBUNTU_VERSION = "22.04"
   }
   dockerfile = "Dockerfile"
-  tags = ["docker.io/ideascale/jre:${TAG}"]
+  tags = ["docker.io/ideascale/jre-${java_version}:${TAG}"]
   secret = ["type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml"]
 }
