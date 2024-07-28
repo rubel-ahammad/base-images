@@ -7,11 +7,14 @@ variable "TAG" {
 }
 
 group "default" {
-  targets = [ "glibc" ]
+  targets = ["glibc"]
 }
 
 target "glibc" {
-    dockerfile = "Dockerfile"
-    tags = ["docker.io/ideascale/glibc:${TAG}"]
-    secret = [ "type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml" ]
+  args = {
+    UBUNTU_VERSION = "22.04"
+  }
+  dockerfile = "Dockerfile"
+  tags = ["docker.io/ideascale/glibc:${TAG}"]
+  secret = ["type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml"]
 }
