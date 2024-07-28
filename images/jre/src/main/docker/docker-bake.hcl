@@ -13,6 +13,7 @@ target "jre" {
   }
   args = {
     UBUNTU_VERSION = "22.04"
+    JAVA_VERSION = "${java_version}"
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/jre-${java_version}:${TAG}"]
