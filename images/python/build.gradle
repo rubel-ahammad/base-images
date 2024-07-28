@@ -1,0 +1,11 @@
+apply from: "${rootProject.projectDir}/gradle/docker.gradle"
+
+tasks.register('dockerBuildImage', Exec) {
+    group 'localdev/build'
+
+    var tags = dockerPushImageUrls(project.name).collect { "--set *.tags=$it" }
+    workingDir "$projectDir/src/main/docker"
+    commandLine 'bash', '-c', """\
+            docker buildx bake ${tags.join(' ')}
+        """.stripIndent()
+}
