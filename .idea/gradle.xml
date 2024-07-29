@@ -10,8 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/images" />
-            <option value="$PROJECT_DIR$/images/glibc" />
             <option value="$PROJECT_DIR$/images/jre" />
+            <option value="$PROJECT_DIR$/images/native" />
             <option value="$PROJECT_DIR$/images/python" />
           </set>
         </option>

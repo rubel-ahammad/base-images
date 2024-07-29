@@ -1,5 +1,5 @@
 rootProject.name = 'base-images'
 
-include ':images:glibc',
-        ':images:jre',
+include ':images:jre',
+        ':images:native',
         ':images:python'
