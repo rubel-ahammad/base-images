@@ -29,11 +29,7 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     base-files_base \
     base-files_release-info \
     bash_bins \
-    ca-certificates_data \
-    libgcc-s1_libs \
-    libc6_libs \
     libgomp1_libs \
-    openssl_config \
     python3.10_core \
     python3.10_standard \
     python3.10-minimal_bins \

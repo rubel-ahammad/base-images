@@ -56,13 +56,14 @@ RUN tar zcvf legal.tar.gz legal && rm -r legal
 
 RUN mkdir -p /rootfs \
     && chisel cut --root /rootfs \
+        base-files_base \
+        base-files_release-info \
         libc6_libs \
         libgcc-s1_libs \
         libstdc++6_libs \
         zlib1g_libs \
         libgraphite2-3_libs \
-        libglib2.0-0_core \
-        base-files_bin
+        libglib2.0-0_core
 
 RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
     && mkdir -p /rootfs/etc \

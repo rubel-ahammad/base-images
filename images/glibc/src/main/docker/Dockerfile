@@ -25,10 +25,8 @@ WORKDIR /rootfs
 RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     base-files_base \
     base-files_release-info \
-    ca-certificates_data \
     libgcc-s1_libs \
     libc6_libs \
-    openssl_config \
     zlib1g_libs
 
 FROM scratch
