@@ -81,5 +81,5 @@ COPY --from=builder /rootfs /
 # Workaround for https://github.com/moby/moby/issues/38710
 COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER
 ENV JAVA_HOME /opt/java/
-ENV PATH="$PATH:$JAVA_HOME/bin"
+ENV PATH="$JAVA_HOME/bin:$PATH"
 ENTRYPOINT ["/opt/java/bin/java"]
