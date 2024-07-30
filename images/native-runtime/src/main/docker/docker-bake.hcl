@@ -7,14 +7,15 @@ variable "TAG" {
 }
 
 group "default" {
-  targets = ["native"]
+  targets = ["native-runtime"]
 }
 
 target "native" {
   args = {
     UBUNTU_VERSION = "22.04"
+    CHISEL_VERSION = "0.10.0"
   }
   dockerfile = "Dockerfile"
-  tags = ["docker.io/ideascale/native:${TAG}"]
+  tags = ["docker.io/ideascale/native-runtime:${TAG}"]
   secret = ["type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml"]
 }

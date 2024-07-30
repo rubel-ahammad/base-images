@@ -1,5 +1,6 @@
 rootProject.name = 'base-images'
 
 include ':images:jre',
-        ':images:native',
-        ':images:python'
+        ':images:native-runtime',
+        ':images:python',
+        ':images:tomcat'

@@ -11,8 +11,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/images" />
             <option value="$PROJECT_DIR$/images/jre" />
-            <option value="$PROJECT_DIR$/images/native" />
+            <option value="$PROJECT_DIR$/images/native-runtime" />
             <option value="$PROJECT_DIR$/images/python" />
+            <option value="$PROJECT_DIR$/images/tomcat" />
           </set>
         </option>
       </GradleProjectSettings>

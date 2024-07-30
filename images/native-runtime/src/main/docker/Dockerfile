@@ -1,5 +1,5 @@
-ARG UBUNTU_VERSION=22.04
-ARG CHISEL_VERSION=0.10.0
+ARG UBUNTU_VERSION
+ARG CHISEL_VERSION
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
@@ -28,6 +28,7 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     libgcc-s1_libs \
     libc6_libs \
     zlib1g_libs
+
 
 FROM scratch
 COPY --from=builder /rootfs /

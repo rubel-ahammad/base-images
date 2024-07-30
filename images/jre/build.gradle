@@ -1,7 +1,17 @@
 apply from: "${rootProject.projectDir}/gradle/docker.gradle"
 
+tasks.register('dockerBuildImageJre11', Exec) {
+    group 'localdev/jre'
+
+    var tags = dockerPushImageUrls('jre-11').collect { "--set *.tags=$it" }
+    workingDir "$projectDir/src/main/docker"
+    commandLine 'bash', '-c', """\
+        docker buildx bake jre-11 ${tags.join(' ')}
+    """.stripIndent()
+}
+
 tasks.register('dockerBuildImageJre17', Exec) {
-    group 'localdev/build'
+    group 'localdev/jre'
 
     var tags = dockerPushImageUrls('jre-17').collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
@@ -11,7 +21,7 @@ tasks.register('dockerBuildImageJre17', Exec) {
 }
 
 tasks.register('dockerBuildImageJre21', Exec) {
-    group 'localdev/build'
+    group 'localdev/jre'
 
     var tags = dockerPushImageUrls("jre-21").collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
@@ -21,6 +31,6 @@ tasks.register('dockerBuildImageJre21', Exec) {
 }
 
 tasks.register('dockerBuildImage') {
-    group 'localdev/build'
-    dependsOn 'dockerBuildImageJre17', 'dockerBuildImageJre21'
+    group 'localdev/docker'
+    dependsOn 'dockerBuildImageJre11', 'dockerBuildImageJre17', 'dockerBuildImageJre21'
 }

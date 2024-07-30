@@ -1,16 +1,17 @@
 apply from: "${rootProject.projectDir}/gradle/docker.gradle"
 
-tasks.register('dockerBuildImagePython', Exec) {
-    group 'localdev/python'
+tasks.register('dockerBuildImageTomcat', Exec) {
+    group 'localdev/tomcat'
+    dependsOn ':images:jre:dockerBuildImageJre11'
 
     var tags = dockerPushImageUrls(project.name).collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
     commandLine 'bash', '-c', """\
-            docker buildx bake ${tags.join(' ')}
-        """.stripIndent()
+        docker buildx bake ${project.name} ${tags.join(' ')}
+    """.stripIndent()
 }
 
 tasks.register('dockerBuildImage') {
     group 'localdev/docker'
-    dependsOn 'dockerBuildImagePython'
+    dependsOn 'dockerBuildImageTomcat'
 }

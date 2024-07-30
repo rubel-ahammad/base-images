@@ -1,10 +1,12 @@
-ARG UBUNTU_VERSION=22.04
-ARG USER=app
-ARG UID=101
-ARG GROUP=app
-ARG GID=101
-ARG JAVA_VERSION=21
-ARG CHISEL_VERSION=0.10.0
+ARG UBUNTU_VERSION
+ARG JAVA_VERSION
+ARG JAVA_EXTRA_MODULES
+ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES
+ARG USER
+ARG UID
+ARG GROUP
+ARG GID
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
@@ -13,7 +15,9 @@ ARG UID
 ARG GROUP
 ARG GID
 ARG JAVA_VERSION
+ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
@@ -40,7 +44,7 @@ java.base,java.datatransfer,java.instrument,\
 java.logging,java.management,java.management.rmi,java.naming,\
 java.prefs,java.rmi,java.security.sasl,java.xml,\
 jdk.internal.vm.ci,jdk.jfr,jdk.management,\
-jdk.management.jfr,jdk.management.agent,jdk.net,jdk.nio.mapmode,\
+jdk.management.jfr,jdk.management.agent,jdk.net,\
 jdk.sctp,jdk.unsupported,jdk.naming.rmi,java.se,java.net.http,\
 java.scripting,java.security.jgss,java.smartcardio,java.sql,\
 java.sql.rowset,java.transaction.xa,java.xml.crypto,jdk.accessibility,\
@@ -49,6 +53,7 @@ jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.security.auth,\
 jdk.security.jgss,jdk.xml.dom,jdk.zipfs,java.compiler,\
 jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,\
 jdk.jdwp.agent \
+$JAVA_EXTRA_MODULES \
     --output /opt/java
 
 WORKDIR /opt/java
@@ -57,7 +62,7 @@ RUN tar zcvf legal.tar.gz legal && rm -r legal
 RUN mkdir -p /rootfs \
     && chisel cut --root /rootfs \
         base-files_base \
-        base-files_release-info \
+        base-files_release-info $CHISEL_EXTRA_SLICES \
         libc6_libs \
         libgcc-s1_libs \
         libstdc++6_libs \
@@ -72,15 +77,17 @@ RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
 RUN mkdir -p /rootfs/opt \
     && cp -r /opt/java/ /rootfs/opt/java/
 
+
 FROM scratch
 ARG USER
 ARG UID
 ARG GID
-USER $UID:$GID
 
+USER $UID:$GID
 COPY --from=builder /rootfs /
 # Workaround for https://github.com/moby/moby/issues/38710
 COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER
-ENV JAVA_HOME /opt/java/
+
+ENV JAVA_HOME=/opt/java/
 ENV PATH="$JAVA_HOME/bin:$PATH"
 ENTRYPOINT ["/opt/java/bin/java"]

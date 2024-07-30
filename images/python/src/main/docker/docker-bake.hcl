@@ -13,6 +13,7 @@ group "default" {
 target "python" {
   args = {
     UBUNTU_VERSION = "22.04"
+    CHISEL_VERSION = "0.10.0"
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/python:${TAG}"]

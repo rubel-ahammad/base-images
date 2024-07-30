@@ -1,5 +1,5 @@
-ARG UBUNTU_VERSION=22.04
-ARG CHISEL_VERSION=0.10.0
+ARG UBUNTU_VERSION
+ARG CHISEL_VERSION
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
@@ -34,6 +34,7 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
     python3.10_standard \
     python3.10-minimal_bins \
     python3.10-venv_ensurepip
+
 
 FROM scratch
 COPY --from=builder /rootfs /
