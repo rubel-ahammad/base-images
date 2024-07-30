@@ -6,9 +6,6 @@ ARG GROUP
 ARG UID
 ARG GID
 
-FROM busybox as busybox
-
-
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG TOMCAT_VERSION
 ARG USER
