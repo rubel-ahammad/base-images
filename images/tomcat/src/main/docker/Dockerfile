@@ -40,5 +40,5 @@ ENV PATH="$CATALINA_HOME/bin:$PATH"
 COPY --from=builder --chown=$UID:$GID /opt/tomcat /opt/tomcat
 
 EXPOSE 8080
-ENTRYPOINT /opt/tomcat/bin/catalina.sh
+ENTRYPOINT ["/opt/tomcat/bin/catalina.sh"]
 CMD ["run"]
