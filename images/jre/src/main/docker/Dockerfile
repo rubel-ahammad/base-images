@@ -1,4 +1,5 @@
 ARG UBUNTU_VERSION
+ARG UBUNTU_EXTRA_PACKAGES
 ARG JAVA_VERSION
 ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
@@ -10,6 +11,7 @@ ARG GID
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
+ARG UBUNTU_EXTRA_PACKAGES
 ARG USER
 ARG UID
 ARG GROUP
@@ -29,7 +31,7 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get install -y ca-certificates-java \
+RUN apt-get install -y $UBUNTU_EXTRA_PACKAGES ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
     && apt-get clean -y \
@@ -83,7 +85,6 @@ ARG USER
 ARG UID
 ARG GID
 
-USER $UID:$GID
 COPY --from=builder /rootfs /
 # Workaround for https://github.com/moby/moby/issues/38710
 COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER

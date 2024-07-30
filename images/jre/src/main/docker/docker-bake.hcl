@@ -12,15 +12,16 @@ target "jre" {
     java_version = ["11", "17", "21"]
   }
   args = {
-    UBUNTU_VERSION      = "22.04"
-    CHISEL_VERSION      = "0.10.0"
-    CHISEL_EXTRA_SLICES = java_version == "11" ? "bash_bins dash_bins coreutils_bins" : ""
-    JAVA_VERSION        = "${java_version}"
-    JAVA_EXTRA_MODULES  = java_version == "11" ? "" : "jdk.nio.mapmode"
-    USER                = "ideascale"
-    GROUP               = "ideascale"
-    UID                 = "1000"
-    GID                 = "1000"
+    UBUNTU_VERSION        = "22.04"
+    UBUNTU_EXTRA_PACKAGES = java_version == "11" ? "gosu unzip" : ""
+    CHISEL_VERSION        = "0.10.0"
+    CHISEL_EXTRA_SLICES   = java_version == "11" ? "bash_bins dash_bins coreutils_bins grep_bins findutils_bins" : ""
+    JAVA_VERSION          = "${java_version}"
+    JAVA_EXTRA_MODULES    = java_version == "11" ? "" : "jdk.nio.mapmode"
+    USER                  = "ideascale"
+    GROUP                 = "ideascale"
+    UID                   = "1000"
+    GID                   = "1000"
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/jre-${java_version}:${TAG}"]

@@ -18,5 +18,4 @@ target "tomcat" {
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/tomcat:${TAG}"]
-  secret = ["type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml"]
 }
