@@ -10,7 +10,7 @@ group "default" {
   targets = ["native-runtime"]
 }
 
-target "native" {
+target "native-runtime" {
   args = {
     UBUNTU_VERSION = "22.04"
     CHISEL_VERSION = "0.10.0"
