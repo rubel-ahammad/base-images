@@ -35,7 +35,7 @@ RUN apt-get install --no-install-recommends -y \
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
-RUN if [[ "$JAVA_VERSION" == "11" ]]; then JAVA_EXTRA_MODULES="jdk.nio.mapmode"; fi \
+RUN if [[ ! "$JAVA_VERSION" == "11" ]]; then JAVA_EXTRA_MODULES="jdk.nio.mapmode"; fi \
     jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
 java.base,java.datatransfer,java.instrument,\
