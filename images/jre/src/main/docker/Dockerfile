@@ -25,7 +25,8 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get install --no-install-recommends -y \
+RUN apt-get update  \
+    && apt-get install --no-install-recommends -y \
       ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
