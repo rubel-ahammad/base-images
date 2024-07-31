@@ -1,0 +1,7 @@
+token: ${project.properties['ubuntu.pro.token']}
+enable_services:
+  - esm-apps
+  - esm-infra
+#  - fips # Requires Ubuntu 20.04
+  - fips-updates
+  - usg

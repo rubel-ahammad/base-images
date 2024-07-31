@@ -1,0 +1,13 @@
+allprojects {
+    tasks.register('syncResources', Sync) {
+        from("$projectDir/src/main/resources") {
+            expand(project.properties)
+        }
+        from "$projectDir/src/main/docker"
+        into layout.buildDirectory.asFile.get()
+    }
+
+    tasks.named('assemble') {
+        dependsOn 'syncResources'
+    }
+}

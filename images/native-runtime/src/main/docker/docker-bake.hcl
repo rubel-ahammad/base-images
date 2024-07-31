@@ -13,5 +13,5 @@ target "native-runtime" {
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/native-runtime:${TAG}"]
-  secret = ["type=file,id=pro-attach-config,src=${HOME}/.local/pro-attach-config.yaml"]
+  secret = ["type=file,id=pro-attach-config,src=pro-attach-config.yaml"]
 }

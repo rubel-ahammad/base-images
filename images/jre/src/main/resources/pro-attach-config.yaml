@@ -1,4 +1,4 @@
-token: PRO_TOKEN
+token: ${project.properties['ubuntu.pro.token']}
 enable_services:
   - esm-apps
   - esm-infra
