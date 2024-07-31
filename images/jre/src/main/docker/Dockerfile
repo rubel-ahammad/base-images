@@ -1,9 +1,7 @@
 ARG UBUNTU_VERSION
-ARG UBUNTU_EXTRA_PACKAGES
 ARG JAVA_VERSION
 ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
-ARG CHISEL_EXTRA_SLICES
 ARG USER
 ARG UID
 ARG GROUP
@@ -11,7 +9,6 @@ ARG GID
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
-ARG UBUNTU_EXTRA_PACKAGES
 ARG USER
 ARG UID
 ARG GROUP
@@ -19,8 +16,6 @@ ARG GID
 ARG JAVA_VERSION
 ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
-ARG CHISEL_EXTRA_SLICES
-ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
@@ -31,7 +26,8 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get install -y $UBUNTU_EXTRA_PACKAGES ca-certificates-java \
+RUN apt-get install --no-install-recommends -y \
+      ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
     && apt-get clean -y \
@@ -61,7 +57,7 @@ WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
 
 RUN mkdir -p /rootfs \
-    && chisel cut --root /rootfs $CHISEL_EXTRA_SLICES \
+    && chisel cut --root /rootfs \
         base-files_base \
         base-files_release-info \
         libc6_libs \

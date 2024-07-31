@@ -6,10 +6,6 @@ variable "TAG" {
   default = "0.0.0-local"
 }
 
-group "default" {
-  targets = ["python"]
-}
-
 target "python" {
   args = {
     UBUNTU_VERSION = "22.04"

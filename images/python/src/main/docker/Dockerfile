@@ -4,7 +4,6 @@ ARG CHISEL_VERSION
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
 ARG CHISEL_VERSION
-ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
@@ -15,7 +14,7 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get install -y \
+RUN apt-get install --no-install-recommends -y \
       python3.10 \
       python3.10-venv \
     && apt-get clean -y \
