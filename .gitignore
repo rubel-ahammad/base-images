@@ -1,2 +1,3 @@
 .gradle/
-infra/.local/
+.local/
+build/
