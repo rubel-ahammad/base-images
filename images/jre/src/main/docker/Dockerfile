@@ -54,17 +54,16 @@ jdk.charsets,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.dynalink,jdk.httpserver,\
 jdk.jsobject,jdk.localedata,jdk.naming.dns,jdk.security.auth,\
 jdk.security.jgss,jdk.xml.dom,jdk.zipfs,java.compiler,\
 jdk.internal.vm.compiler,jdk.internal.vm.compiler.management,\
-jdk.jdwp.agent \
-$JAVA_EXTRA_MODULES \
+jdk.jdwp.agent${JAVA_EXTRA_MODULES:+,$JAVA_EXTRA_MODULES} \
     --output /opt/java
 
 WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
 
 RUN mkdir -p /rootfs \
-    && chisel cut --root /rootfs \
+    && chisel cut --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
-        base-files_release-info $CHISEL_EXTRA_SLICES \
+        base-files_release-info \
         libc6_libs \
         libgcc-s1_libs \
         libstdc++6_libs \
@@ -76,6 +75,7 @@ RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
     && mkdir -p /rootfs/etc \
     && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
     && echo -e "root:x:0:0:root:/root:/noshell\n$USER:x:$UID:$GID::/home/$USER:/noshell" >/rootfs/etc/passwd
+
 RUN mkdir -p /rootfs/opt \
     && cp -r /opt/java/ /rootfs/opt/java/
 
