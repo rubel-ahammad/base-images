@@ -6,7 +6,7 @@ tasks.register('dockerBuildImageNativeRuntime', Exec) {
     var tags = dockerPushImageUrls(project.name).collect { "--set *.tags=$it" }
     workingDir "$projectDir/src/main/docker"
     commandLine 'bash', '-c', """\
-            docker buildx bake ${tags.join(' ')}
+            docker buildx bake ${project.name} ${tags.join(' ')}
         """.stripIndent()
 }
 
