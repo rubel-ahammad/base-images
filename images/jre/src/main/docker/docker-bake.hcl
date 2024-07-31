@@ -15,7 +15,6 @@ target "jre" {
     UBUNTU_VERSION     = "22.04"
     CHISEL_VERSION     = "0.10.0"
     JAVA_VERSION       = "${java_version}"
-    JAVA_EXTRA_MODULES = java_version == "11" ? "" : "jdk.nio.mapmode"
     USER               = "ideascale"
     GROUP              = "ideascale"
     UID                = "1000"

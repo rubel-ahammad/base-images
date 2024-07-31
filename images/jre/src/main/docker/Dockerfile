@@ -1,6 +1,5 @@
 ARG UBUNTU_VERSION
 ARG JAVA_VERSION
-ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
 ARG USER
 ARG UID
@@ -9,12 +8,12 @@ ARG GID
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
+ARG TARGETARCH
 ARG USER
 ARG UID
 ARG GROUP
 ARG GID
 ARG JAVA_VERSION
-ARG JAVA_EXTRA_MODULES
 ARG CHISEL_VERSION
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
@@ -36,7 +35,8 @@ RUN apt-get install --no-install-recommends -y \
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
-RUN jlink --no-header-files --no-man-pages --strip-debug \
+RUN if [[ "$JAVA_VERSION" == "11" ]]; then JAVA_EXTRA_MODULES="jdk.nio.mapmode"; fi \
+    jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
 java.base,java.datatransfer,java.instrument,\
 java.logging,java.management,java.management.rmi,java.naming,\
