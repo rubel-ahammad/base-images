@@ -1,5 +1,5 @@
 allprojects {
-    tasks.register('syncResources', Sync) {
+    tasks.register('copyResources', Copy) {
         from("$projectDir/src/main/resources") {
             expand(project.properties)
         }
@@ -8,6 +8,6 @@ allprojects {
     }
 
     tasks.named('assemble') {
-        dependsOn 'syncResources'
+        dependsOn 'copyResources'
     }
 }
