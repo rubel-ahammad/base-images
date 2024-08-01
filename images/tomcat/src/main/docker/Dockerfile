@@ -2,6 +2,7 @@ ARG UBUNTU_VERSION
 ARG TOMCAT_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES=""
 ARG USER
 ARG UID
 ARG GROUP
@@ -13,6 +14,7 @@ ARG TARGETARCH
 ARG TOMCAT_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES
 ARG USER
 ARG UID
 ARG GROUP
@@ -62,7 +64,7 @@ WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
 
 RUN mkdir -p /rootfs \
-    && chisel cut --root /rootfs \
+    && chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
         base-files_release-info \
         bash_bins \

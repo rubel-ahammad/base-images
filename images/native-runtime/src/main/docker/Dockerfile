@@ -1,9 +1,11 @@
 ARG UBUNTU_VERSION
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES=""
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
@@ -22,12 +24,12 @@ ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chise
 RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 WORKDIR /rootfs
-RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs \
-    base-files_base \
-    base-files_release-info \
-    libgcc-s1_libs \
-    libc6_libs \
-    zlib1g_libs
+RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
+        base-files_base \
+        base-files_release-info \
+        libgcc-s1_libs \
+        libc6_libs \
+        zlib1g_libs
 
 
 FROM scratch

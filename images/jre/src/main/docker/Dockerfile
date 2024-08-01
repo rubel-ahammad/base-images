@@ -1,6 +1,7 @@
 ARG UBUNTU_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES=""
 ARG USER
 ARG UID
 ARG GROUP
@@ -9,12 +10,13 @@ ARG GID
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
 ARG TARGETARCH
+ARG JAVA_VERSION
+ARG CHISEL_VERSION
+ARG CHISEL_EXTRA_SLICES
 ARG USER
 ARG UID
 ARG GROUP
 ARG GID
-ARG JAVA_VERSION
-ARG CHISEL_VERSION
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
@@ -58,7 +60,7 @@ WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
 
 RUN mkdir -p /rootfs \
-    && chisel cut --root /rootfs \
+    && chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
         base-files_release-info \
         libc6_libs \

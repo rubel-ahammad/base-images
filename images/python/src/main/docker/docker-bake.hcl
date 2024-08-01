@@ -8,8 +8,9 @@ variable "TAG" {
 
 target "python" {
   args = {
-    UBUNTU_VERSION = "22.04"
-    CHISEL_VERSION = "0.10.0"
+    UBUNTU_VERSION      = "22.04"
+    CHISEL_VERSION      = "0.10.0"
+    CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "bash_bins" : ""
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/python:${TAG}"]
