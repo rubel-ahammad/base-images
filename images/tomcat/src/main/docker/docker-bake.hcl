@@ -14,6 +14,10 @@ target "tomcat" {
     TOMCAT_VERSION = "${TOMCAT_VERSION}"
     JAVA_VERSION   = "17"
     CHISEL_VERSION = "${CHISEL_VERSION}"
+    USER           = "ideascale"
+    GROUP          = "ideascale"
+    UID            = "1000"
+    GID            = "1000"
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/tomcat:${TOMCAT_VERSION}"]

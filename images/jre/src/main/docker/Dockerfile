@@ -26,6 +26,7 @@ RUN apt-get $APT_OPTIONS update  \
       ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
+      openssl \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -57,12 +58,15 @@ RUN mkdir -p /rootfs \
     && chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
         base-files_release-info \
+        ca-certificates_data \
+        ca-certificates-java_data \
         libc6_libs \
         libgcc-s1_libs \
-        libstdc++6_libs \
-        zlib1g_libs \
+        libglib2.0-0_core \
         libgraphite2-3_libs \
-        libglib2.0-0_core
+        libstdc++6_libs \
+        openssl_config \
+        zlib1g_libs
 
 RUN mkdir -p /rootfs/opt \
     && cp -r /opt/java/ /rootfs/opt/java/

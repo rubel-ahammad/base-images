@@ -1,4 +1,5 @@
 ARG UBUNTU_VERSION
+ARG PYTHON_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES=""
 ARG APT_OPTIONS=""
@@ -6,6 +7,7 @@ ARG APT_OPTIONS=""
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
 ARG TARGETARCH
+ARG PYTHON_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES
 ARG APT_OPTIONS
@@ -19,8 +21,9 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get update  \
+RUN apt-get $APT_OPTIONS update  \
     && apt-get $APT_OPTIONS install --no-install-recommends -y \
+      openssl \
       python3.10 \
       python3.10-venv \
     && apt-get clean -y \
@@ -34,11 +37,13 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLI
     base-files_base \
     base-files_release-info \
     bash_bins \
+    ca-certificates_data \
     libgomp1_libs \
-    python3.10_core \
-    python3.10_standard \
-    python3.10-minimal_bins \
-    python3.10-venv_ensurepip
+    openssl_config \
+    python${PYTHON_VERSION}_core \
+    python${PYTHON_VERSION}_standard \
+    python${PYTHON_VERSION}-minimal_bins \
+    python${PYTHON_VERSION}-venv_ensurepip
 
 
 FROM scratch

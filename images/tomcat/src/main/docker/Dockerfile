@@ -13,6 +13,10 @@ ARG JAVA_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES
 ARG APT_OPTIONS
+ARG USER
+ARG UID
+ARG GROUP
+ARG GID
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
@@ -28,6 +32,7 @@ RUN apt-get $APT_OPTIONS update  \
       ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
+      openssl \
       curl \
       gosu \
       unzip \
@@ -62,15 +67,23 @@ RUN mkdir -p /rootfs \
         base-files_base \
         base-files_release-info \
         bash_bins \
-        dash_bins \
+        ca-certificates_data \
+        ca-certificates-java_data \
         coreutils_bins \
+        dash_bins \
         libc6_libs \
         libgcc-s1_libs \
         libglib2.0-0_core \
         libgraphite2-3_libs \
         libstdc++6_libs \
-        zlib1g_libs  \
-        libbz2-1.0_libs
+        libbz2-1.0_libs \
+        openssl_config \
+        zlib1g_libs
+
+RUN install -d -m 0755 -o $UID -g $GID /rootfs/var/lib/$USER \
+    && mkdir -p /rootfs/etc \
+    && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
+    && echo -e "root:x:0:0:root:/root:/noshell\n$USER:x:$UID:$GID::/var/lib/$USER:/noshell" >/rootfs/etc/passwd
 
 RUN curl -o /tmp/tomcat.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz \
     && tar zxvf /tmp/tomcat.tar.gz -C /opt \
@@ -96,6 +109,8 @@ ENV CATALINA_HOME=/usr/local/tomcat
 ENV PATH="$CATALINA_HOME/bin:$JAVA_HOME/bin:$PATH"
 
 COPY --from=builder /rootfs /
+# Workaround for https://github.com/moby/moby/issues/38710
+COPY --from=builder --chown=$UID:$GID /rootfs/var/lib/$USER /var/lib/$USER
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/tomcat/bin/catalina.sh"]

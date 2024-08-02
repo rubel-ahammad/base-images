@@ -19,7 +19,10 @@ RUN --mount=type=secret,id=pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get upgrade -y
 
-RUN apt-get clean -y \
+RUN apt-get $APT_OPTIONS update  \
+    && apt-get $APT_OPTIONS install --no-install-recommends -y \
+      openssl \
+    && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
@@ -29,7 +32,9 @@ WORKDIR /rootfs
 RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
         base-files_release-info \
+        ca-certificates_data \
         libgcc-s1_libs \
+        openssl_config \
         libc6_libs \
         zlib1g_libs
 
