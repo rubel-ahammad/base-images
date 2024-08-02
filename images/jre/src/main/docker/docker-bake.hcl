@@ -6,20 +6,19 @@ variable "TAG" {
   default = "0.0.0-local"
 }
 
+variable "CHISEL_VERSION" {
+}
+
 target "jre" {
   name = "jre-${java_version}"
   matrix = {
     java_version = ["11", "17", "21"]
   }
   args = {
-    UBUNTU_VERSION      = "22.04"
-    CHISEL_VERSION      = "0.10.0"
+    UBUNTU_VERSION      = "20.04"
+    CHISEL_VERSION      = "${CHISEL_VERSION}"
     CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "bash_bins" : ""
     JAVA_VERSION        = "${java_version}"
-    USER                = "ideascale"
-    GROUP               = "ideascale"
-    UID                 = "1000"
-    GID                 = "1000"
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/jre-${java_version}:${TAG}"]

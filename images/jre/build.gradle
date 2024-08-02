@@ -7,6 +7,7 @@ tasks.register('dockerBuildImageJre11', Exec) {
     var tags = dockerPushImageUrls('jre-11').collect { "--set *.tags=$it" }
     workingDir layout.buildDirectory.asFile
     commandLine 'bash', '-c', """\
+        export CHISEL_VERSION=${project.property('chisel.version')}
         docker buildx bake jre-11 ${tags.join(' ')}
     """.stripIndent()
 }
@@ -18,6 +19,7 @@ tasks.register('dockerBuildImageJre17', Exec) {
     var tags = dockerPushImageUrls('jre-17').collect { "--set *.tags=$it" }
     workingDir layout.buildDirectory.asFile
     commandLine 'bash', '-c', """\
+        export CHISEL_VERSION=${project.property('chisel.version')}
         docker buildx bake jre-17 ${tags.join(' ')}
     """.stripIndent()
 }
@@ -29,6 +31,7 @@ tasks.register('dockerBuildImageJre21', Exec) {
     var tags = dockerPushImageUrls("jre-21").collect { "--set *.tags=$it" }
     workingDir layout.buildDirectory.asFile
     commandLine 'bash', '-c', """\
+        export CHISEL_VERSION=${project.property('chisel.version')}
         docker buildx bake jre-21 ${tags.join(' ')}
     """.stripIndent()
 }

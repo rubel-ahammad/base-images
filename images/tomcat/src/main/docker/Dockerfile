@@ -3,10 +3,7 @@ ARG TOMCAT_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES=""
-ARG USER
-ARG UID
-ARG GROUP
-ARG GID
+ARG APT_OPTIONS=""
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
@@ -15,22 +12,19 @@ ARG TOMCAT_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES
-ARG USER
-ARG UID
-ARG GROUP
-ARG GID
+ARG APT_OPTIONS
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
-    apt-get update \
+    apt-get $APT_OPTIONS update \
     # Required to talk to the Ubuntu Pro authentication server securely.
-    && apt-get install --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
+    && apt-get  $APT_OPTIONS install --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
     && pro attach --attach-config /run/secrets/pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
-    && apt-get upgrade -y
+    && apt-get  $APT_OPTIONS upgrade -y
 
-RUN apt-get update  \
-    && apt-get install --no-install-recommends -y \
+RUN apt-get $APT_OPTIONS update  \
+    && apt-get $APT_OPTIONS install --no-install-recommends -y \
       ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
@@ -70,8 +64,6 @@ RUN mkdir -p /rootfs \
         bash_bins \
         dash_bins \
         coreutils_bins \
-        findutils_bins \
-        grep_bins \
         libc6_libs \
         libgcc-s1_libs \
         libglib2.0-0_core \
@@ -80,41 +72,31 @@ RUN mkdir -p /rootfs \
         zlib1g_libs  \
         libbz2-1.0_libs
 
-RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
-    && mkdir -p /rootfs/etc \
-    && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
-    && echo -e "root:x:0:0:root:/root:/noshell\n$USER:x:$UID:$GID::/home/$USER:/noshell" >/rootfs/etc/passwd
-
 RUN curl -o /tmp/tomcat.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz \
     && tar zxvf /tmp/tomcat.tar.gz -C /opt \
     && rm /tmp/tomcat.tar.gz \
-    && mv /opt/apache-tomcat-${TOMCAT_VERSION} /opt/tomcat \
-    && chown -R ${UID}:${GID} /opt/tomcat/* \
-    && find /opt/tomcat/bin -type f -name "*.sh" -exec chmod +x {} \; \
-    && rm -rf /opt/tomcat/webapps/*
+    && mv /opt/apache-tomcat-${TOMCAT_VERSION} /usr/local/tomcat \
+    && find /usr/local/tomcat/bin -type f -name "*.sh" -exec chmod +x {} \; \
+    && rm -rf /usr/local/tomcat/webapps/*
 
 # No chisel available: gosu, unzip
-RUN mkdir -p /rootfs/opt \
+RUN mkdir -p /rootfs/opt /rootfs/usr/local\
     && cp -r /opt/java/ /rootfs/opt/java/ \
-    && cp -r /opt/tomcat/ /rootfs/opt/tomcat/ \
+    && cp -r /usr/local/tomcat/ /rootfs/usr/local/tomcat/ \
+    && cp /bin/grep /rootfs/bin/grep \
+    && cp /usr/bin/find /rootfs/usr/bin/find \
     && cp /usr/sbin/gosu /rootfs/usr/sbin/gosu \
     && cp /usr/bin/unzip /rootfs/usr/bin/unzip
 
 
 FROM scratch
-ARG USER
-ARG GROUP
-ARG UID
-ARG GID
 
 ENV JAVA_HOME=/opt/java/
-ENV CATALINA_HOME=/opt/tomcat
+ENV CATALINA_HOME=/usr/local/tomcat
 ENV PATH="$CATALINA_HOME/bin:$JAVA_HOME/bin:$PATH"
 
 COPY --from=builder /rootfs /
-# Workaround for https://github.com/moby/moby/issues/38710
-COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER
 
 EXPOSE 8080
-ENTRYPOINT ["/opt/tomcat/bin/catalina.sh"]
+ENTRYPOINT ["/usr/local/tomcat/bin/catalina.sh"]
 CMD ["run"]

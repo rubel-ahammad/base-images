@@ -2,10 +2,7 @@ ARG UBUNTU_VERSION
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES=""
-ARG USER
-ARG UID
-ARG GROUP
-ARG GID
+ARG APT_OPTIONS=""
 
 FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
@@ -13,22 +10,19 @@ ARG TARGETARCH
 ARG JAVA_VERSION
 ARG CHISEL_VERSION
 ARG CHISEL_EXTRA_SLICES
-ARG USER
-ARG UID
-ARG GROUP
-ARG GID
+ARG APT_OPTIONS
 
 SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
-    apt-get update \
+    apt-get $APT_OPTIONS update \
     # Required to talk to the Ubuntu Pro authentication server securely.
-    && apt-get install --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
+    && apt-get $APT_OPTIONS --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
     && pro attach --attach-config /run/secrets/pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
-    && apt-get upgrade -y
+    && apt-get $APT_OPTIONS upgrade -y
 
-RUN apt-get update  \
-    && apt-get install --no-install-recommends -y \
+RUN apt-get $APT_OPTIONS update  \
+    && apt-get $APT_OPTIONS install --no-install-recommends -y \
       ca-certificates-java \
       binutils \
       openjdk-${JAVA_VERSION}-jdk \
@@ -70,23 +64,13 @@ RUN mkdir -p /rootfs \
         libgraphite2-3_libs \
         libglib2.0-0_core
 
-RUN install -d -m 0755 -o $UID -g $GID /rootfs/home/$USER \
-    && mkdir -p /rootfs/etc \
-    && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
-    && echo -e "root:x:0:0:root:/root:/noshell\n$USER:x:$UID:$GID::/home/$USER:/noshell" >/rootfs/etc/passwd
-
 RUN mkdir -p /rootfs/opt \
     && cp -r /opt/java/ /rootfs/opt/java/
 
 
 FROM scratch
-ARG USER
-ARG UID
-ARG GID
 
 COPY --from=builder /rootfs /
-# Workaround for https://github.com/moby/moby/issues/38710
-COPY --from=builder --chown=$UID:$GID /rootfs/home/$USER /home/$USER
 
 ENV JAVA_HOME=/opt/java/
 ENV PATH="$JAVA_HOME/bin:$PATH"

@@ -2,22 +2,20 @@ variable "HOME" {
   default = "$HOME"
 }
 
-variable "TAG" {
-  default = "0.0.0-local"
+variable "TOMCAT_VERSION" {
+}
+
+variable "CHISEL_VERSION" {
 }
 
 target "tomcat" {
   args = {
-    UBUNTU_VERSION = "22.04"
-    TOMCAT_VERSION = "9.0.91"
+    UBUNTU_VERSION = "20.04"
+    TOMCAT_VERSION = "${TOMCAT_VERSION}"
     JAVA_VERSION   = "17"
-    CHISEL_VERSION = "0.10.0"
-    USER           = "ideascale"
-    GROUP          = "ideascale"
-    UID            = "1000"
-    GID            = "1000"
+    CHISEL_VERSION = "${CHISEL_VERSION}"
   }
   dockerfile = "Dockerfile"
-  tags = ["docker.io/ideascale/tomcat:${TAG}"]
+  tags = ["docker.io/ideascale/tomcat:${TOMCAT_VERSION}"]
   secret = ["type=file,id=pro-attach-config,src=pro-attach-config.yaml"]
 }

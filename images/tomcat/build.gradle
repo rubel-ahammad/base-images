@@ -7,6 +7,8 @@ tasks.register('dockerBuildImageTomcat', Exec) {
     var tags = dockerPushImageUrls(project.name).collect { "--set *.tags=$it" }
     workingDir layout.buildDirectory.asFile
     commandLine 'bash', '-c', """\
+        export TOMCAT_VERSION=${project.property('tomcat.version')}
+        export CHISEL_VERSION=${project.property('chisel.version')}
         docker buildx bake ${project.name} ${tags.join(' ')}
     """.stripIndent()
 }
