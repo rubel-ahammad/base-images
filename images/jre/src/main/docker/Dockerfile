@@ -16,7 +16,7 @@ SHELL ["/bin/bash", "-oeux", "pipefail", "-c"]
 RUN --mount=type=secret,id=pro-attach-config \
     apt-get $APT_OPTIONS update \
     # Required to talk to the Ubuntu Pro authentication server securely.
-    && apt-get $APT_OPTIONS --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
+    && apt-get $APT_OPTIONS install --no-install-recommends -y ubuntu-advantage-tools ca-certificates \
     && pro attach --attach-config /run/secrets/pro-attach-config \
     # Always upgrade all packages with the Ubuntu Pro services enabled.
     && apt-get $APT_OPTIONS upgrade -y
