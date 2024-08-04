@@ -17,7 +17,7 @@ target "python" {
     UBUNTU_VERSION      = "20.04"
     PYTHON_VERSION      = "${PYTHON_VERSION}"
     CHISEL_VERSION      = "${CHISEL_VERSION}"
-    CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "bash_bins" : ""
+    CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "coreutils_bins" : ""
   }
   dockerfile = "Dockerfile"
   tags = ["docker.io/ideascale/python:${TAG}"]

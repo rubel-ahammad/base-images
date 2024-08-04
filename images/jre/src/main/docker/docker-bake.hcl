@@ -17,7 +17,7 @@ target "jre" {
   args = {
     UBUNTU_VERSION      = "20.04"
     CHISEL_VERSION      = "${CHISEL_VERSION}"
-    CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "bash_bins" : ""
+    CHISEL_EXTRA_SLICES = TAG == "0.0.0-local" ? "bash_bins coreutils_bins" : ""
     JAVA_VERSION        = "${java_version}"
   }
   dockerfile = "Dockerfile"

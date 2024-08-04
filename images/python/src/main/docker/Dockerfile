@@ -24,8 +24,8 @@ RUN --mount=type=secret,id=pro-attach-config \
 RUN apt-get $APT_OPTIONS update  \
     && apt-get $APT_OPTIONS install --no-install-recommends -y \
       openssl \
-      python3.10 \
-      python3.10-venv \
+      python${PYTHON_VERSION} \
+      python${PYTHON_VERSION}-venv \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,17 +34,26 @@ RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 WORKDIR /rootfs
 RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
-    base-files_base \
-    base-files_release-info \
-    bash_bins \
-    ca-certificates_data \
-    libgomp1_libs \
-    openssl_config \
-    python${PYTHON_VERSION}_core \
-    python${PYTHON_VERSION}_standard \
-    python${PYTHON_VERSION}-minimal_bins \
-    python${PYTHON_VERSION}-venv_ensurepip
+      base-files_base \
+      base-files_release-info \
+      bash_bins \
+      ca-certificates_data \
+      openssl_config \
+      python${PYTHON_VERSION}_standard
+
+RUN python3.8 -m venv --copies /opt/venv \
+    && source /opt/venv/bin/activate \
+    && python3.8 -m pip install wheel \
+    && mkdir -p /rootfs/opt/venv/ \
+    && cp -r /opt/venv/ /rootfs/opt/
 
 
 FROM scratch
+ARG PYTHON_VERSION
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 COPY --from=builder /rootfs /
+COPY --from=builder /usr/share/python-wheels/ /usr/share/python-wheels/
+COPY --from=builder /usr/lib/python${PYTHON_VERSION}/distutils/ /usr/lib/python${PYTHON_VERSION}/distutils/
+COPY --from=builder /usr/lib/python${PYTHON_VERSION}/ensurepip/ /usr/lib/python${PYTHON_VERSION}/ensurepip/
