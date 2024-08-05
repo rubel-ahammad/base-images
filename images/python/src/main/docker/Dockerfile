@@ -26,6 +26,7 @@ RUN apt-get $APT_OPTIONS update  \
       openssl \
       python${PYTHON_VERSION} \
       python${PYTHON_VERSION}-venv \
+      libgomp1 \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,6 +39,7 @@ RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLI
       base-files_release-info \
       bash_bins \
       ca-certificates_data \
+      libstdc++6_libs \
       openssl_config \
       python${PYTHON_VERSION}_standard
 
