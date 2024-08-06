@@ -1,0 +1,35 @@
+package: tomcat9
+
+essential:
+  - tomcat9_copyright
+
+slices:
+  base:
+    essential:
+      - tomcat9_config
+      - tomcat9_policy
+      - tomcat9-common_base
+    contents:
+      /etc/tomcat9/**:
+      /lib/systemd/system/tomcat9.service:
+      /usr/libexec/tomcat9/*:
+      /usr/share/tomcat9/default.template:
+      /usr/share/tomcat9/logrotate.template:
+      /usr/share/tomcat9/etc/*:
+      /usr/share/tomcat9-root/**:
+      /var/lib/tomcat9/**:
+      /var/log/tomcat9/**:
+
+  config:
+    contents:
+      /etc/rsyslog.d/tomcat9.conf:
+      /usr/lib/sysusers.d/tomcat9.conf:
+      /usr/lib/tmpfiles.d/tomcat9.conf:
+
+  policy:
+    contents:
+      /etc/tomcat9/policy.d/*.policy:
+
+  copyright:
+    contents:
+      /usr/share/doc/tomcat9/copyright:

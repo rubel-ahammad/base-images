@@ -29,18 +29,17 @@ RUN --mount=type=secret,id=pro-attach-config \
 
 RUN apt-get $APT_OPTIONS update  \
     && apt-get $APT_OPTIONS install --no-install-recommends -y \
-      ca-certificates-java \
       binutils \
+      ca-certificates-java \
+      curl \
+      git \
+      gosu \
       openjdk-${JAVA_VERSION}-jdk \
       openssl \
-      curl \
-      gosu \
+      tomcat9 \
       unzip \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
-
-ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
-RUN tar -xvf chisel.tar.gz -C /usr/bin/
 
 RUN jlink --no-header-files --no-man-pages --strip-debug \
     --add-modules \
@@ -62,8 +61,16 @@ jdk.jdwp.agent,jdk.nio.mapmode \
 WORKDIR /opt/java
 RUN tar zcvf legal.tar.gz legal && rm -r legal
 
+ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
+ADD slices/ slices/
+
+ARG SLICES_DIR=/chisel-releases/slices/
+RUN tar -xvf chisel.tar.gz -C /usr/bin/ \
+    && git clone https://github.com/canonical/chisel-releases.git --branch ubuntu-$UBUNTU_VERSION --depth 1 /chisel-releases \
+    && cp -vRn slices $SLICES_DIR
+
 RUN mkdir -p /rootfs \
-    && chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
+    && chisel cut --release /chisel-releases --root /rootfs $CHISEL_EXTRA_SLICES \
         base-files_base \
         base-files_release-info \
         bash_bins \
@@ -78,6 +85,7 @@ RUN mkdir -p /rootfs \
         libstdc++6_libs \
         libbz2-1.0_libs \
         openssl_config \
+        tomcat9_base \
         zlib1g_libs
 
 RUN install -d -m 0755 -o $UID -g $GID /rootfs/var/lib/$USER \
@@ -85,17 +93,9 @@ RUN install -d -m 0755 -o $UID -g $GID /rootfs/var/lib/$USER \
     && echo -e "root:x:0:\n$GROUP:x:$GID:" >/rootfs/etc/group \
     && echo -e "root:x:0:0:root:/root:/noshell\n$USER:x:$UID:$GID::/var/lib/$USER:/noshell" >/rootfs/etc/passwd
 
-RUN curl -o /tmp/tomcat.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz \
-    && tar zxvf /tmp/tomcat.tar.gz -C /opt \
-    && rm /tmp/tomcat.tar.gz \
-    && mv /opt/apache-tomcat-${TOMCAT_VERSION} /usr/local/tomcat \
-    && find /usr/local/tomcat/bin -type f -name "*.sh" -exec chmod +x {} \; \
-    && rm -rf /usr/local/tomcat/webapps/*
-
 # No chisel available: gosu, unzip
 RUN mkdir -p /rootfs/opt /rootfs/usr/local\
     && cp -r /opt/java/ /rootfs/opt/java/ \
-    && cp -r /usr/local/tomcat/ /rootfs/usr/local/tomcat/ \
     && cp /bin/grep /rootfs/bin/grep \
     && cp /usr/bin/find /rootfs/usr/bin/find \
     && cp /usr/sbin/gosu /rootfs/usr/sbin/gosu \
@@ -105,7 +105,7 @@ RUN mkdir -p /rootfs/opt /rootfs/usr/local\
 FROM scratch
 
 ENV JAVA_HOME=/opt/java/
-ENV CATALINA_HOME=/usr/local/tomcat
+ENV CATALINA_HOME=/usr/share/tomcat9
 ENV PATH="$CATALINA_HOME/bin:$JAVA_HOME/bin:$PATH"
 
 COPY --from=builder /rootfs /

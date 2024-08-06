@@ -1,0 +1,17 @@
+package: libtomcat9-java
+
+essential:
+  - libtomcat9-java_copyright
+
+slices:
+  essential:
+    - libeclipse-jdt-core-java_base
+  base:
+    contents:
+      /usr/share/java/tomcat9-*.jar:
+      /usr/share/lintian/overrides/libtomcat9-java:
+      /usr/share/maven-repo/org/apache/tomcat/**:
+
+  copyright:
+    contents:
+      /usr/share/doc/libtomcat9-java/copyright:

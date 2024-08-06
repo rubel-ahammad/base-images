@@ -1,0 +1,17 @@
+package: tomcat9-common
+
+essential:
+  - tomcat9-common_copyright
+
+slices:
+  base:
+    essential:
+        - libtomcat9-java_base
+    contents:
+      /usr/libexec/tomcat9/tomcat-locate-java.sh:
+      /usr/share/tomcat9/bin/*:
+      /usr/share/tomcat9/lib/*.jar:
+
+  copyright:
+    contents:
+      /usr/share/doc/tomcat9-common/copyright:
