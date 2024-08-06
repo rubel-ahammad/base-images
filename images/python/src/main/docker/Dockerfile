@@ -23,6 +23,7 @@ RUN --mount=type=secret,id=pro-attach-config \
 
 RUN apt-get $APT_OPTIONS update  \
     && apt-get $APT_OPTIONS install --no-install-recommends -y \
+      git \
       openssl \
       python${PYTHON_VERSION} \
       python${PYTHON_VERSION}-venv \
@@ -31,17 +32,24 @@ RUN apt-get $APT_OPTIONS update  \
     && rm -rf /var/lib/apt/lists/*
 
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
-RUN tar -xvf chisel.tar.gz -C /usr/bin/
+ADD slices/ slices/
+
+ARG SLICES_DIR=/chisel-releases/slices/
+RUN tar -xvf chisel.tar.gz -C /usr/bin/ \
+    && git clone https://github.com/canonical/chisel-releases.git --branch ubuntu-$UBUNTU_VERSION --depth 1 /chisel-releases \
+    && cp -vRn slices $SLICES_DIR
 
 WORKDIR /rootfs
-RUN chisel cut --release ubuntu-$UBUNTU_VERSION --root /rootfs $CHISEL_EXTRA_SLICES \
+RUN chisel cut --release /chisel-releases --root /rootfs $CHISEL_EXTRA_SLICES \
       base-files_base \
       base-files_release-info \
       bash_bins \
       ca-certificates_data \
       libstdc++6_libs \
+      libgomp1_libs \
       openssl_config \
-      python${PYTHON_VERSION}_standard
+      python${PYTHON_VERSION}_standard \
+      python${PYTHON_VERSION}-venv_ensurepip
 
 RUN python3.8 -m venv --copies /opt/venv \
     && source /opt/venv/bin/activate \
@@ -58,4 +66,3 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY --from=builder /rootfs /
 COPY --from=builder /usr/share/python-wheels/ /usr/share/python-wheels/
 COPY --from=builder /usr/lib/python${PYTHON_VERSION}/distutils/ /usr/lib/python${PYTHON_VERSION}/distutils/
-COPY --from=builder /usr/lib/python${PYTHON_VERSION}/ensurepip/ /usr/lib/python${PYTHON_VERSION}/ensurepip/
