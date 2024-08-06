@@ -6,7 +6,7 @@ essential:
 slices:
   base:
     essential:
-        - libtomcat9-java_base
+      - libtomcat9-java_base
     contents:
       /usr/libexec/tomcat9/tomcat-locate-java.sh:
       /usr/share/tomcat9/bin/*:

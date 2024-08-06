@@ -4,9 +4,9 @@ essential:
   - libtomcat9-java_copyright
 
 slices:
-  essential:
-    - libeclipse-jdt-core-java_base
   base:
+    essential:
+      - libeclipse-jdt-core-java_base
     contents:
       /usr/share/java/tomcat9-*.jar:
       /usr/share/lintian/overrides/libtomcat9-java:
