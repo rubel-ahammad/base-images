@@ -12,7 +12,8 @@ slices:
     contents:
       /etc/tomcat9/**:
       /lib/systemd/system/tomcat9.service:
-      /usr/libexec/tomcat9/*:
+      /usr/libexec/tomcat9/tomcat-start.sh:
+      /usr/libexec/tomcat9/tomcat-update-policy.sh:
       /usr/share/tomcat9/default.template:
       /usr/share/tomcat9/logrotate.template:
       /usr/share/tomcat9/etc/*:
