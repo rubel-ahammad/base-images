@@ -22,7 +22,7 @@ RUN --mount=type=secret,id=pro-attach-config \
     && apt-get upgrade -y
 
 RUN apt-get $APT_OPTIONS update \
-    && DEBIAN_FRONTEND=noninteractive TZ=UTC apt-get $APT_OPTIONS install --no-install-recommends -y \
+    && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get $APT_OPTIONS install --no-install-recommends -y \
       git \
       openssl \
       python${PYTHON_VERSION} \
