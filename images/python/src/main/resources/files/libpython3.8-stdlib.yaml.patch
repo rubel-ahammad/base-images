@@ -1,0 +1,20 @@
+Subject: [PATCH] fix-distutils.patch
+---
+Index: slices/libpython3.8-stdlib.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/slices/libpython3.8-stdlib.yaml b/slices/libpython3.8-stdlib.yaml
+--- a/slices/libpython3.8-stdlib.yaml	(revision cd4dbfc67c96d9f1b3b8330b1f1c3150c3e62d6f)
++++ b/slices/libpython3.8-stdlib.yaml	(date 1722940495501)
+@@ -165,7 +165,8 @@
+       - libpython3.8-stdlib_core
+       - libpython3.8-stdlib_osx-support
+     contents:
+-      /usr/lib/python3.8/distutils/**:
++      /usr/lib/python3.8/distutils/__init__.py:
++      /usr/lib/python3.8/distutils/version.py:
+       /usr/lib/python3.8/venv/**:
+       /usr/lib/python3.8/zipapp.py:
+ 

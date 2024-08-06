@@ -33,27 +33,33 @@ RUN apt-get $APT_OPTIONS update  \
 
 ADD https://github.com/canonical/chisel/releases/download/v$CHISEL_VERSION/chisel_v${CHISEL_VERSION}_linux_$TARGETARCH.tar.gz chisel.tar.gz
 ADD slices/ slices/
+ADD files/ files/
 
 ARG SLICES_DIR=/chisel-releases/slices/
 RUN tar -xvf chisel.tar.gz -C /usr/bin/ \
     && git clone https://github.com/canonical/chisel-releases.git --branch ubuntu-$UBUNTU_VERSION --depth 1 /chisel-releases \
+    && cd /chisel-releases \
+    && git apply ../files/libpython${PYTHON_VERSION}-stdlib.yaml.patch  \
+    && cd - \
     && cp -vRn slices $SLICES_DIR
 
 WORKDIR /rootfs
 RUN chisel cut --release /chisel-releases --root /rootfs $CHISEL_EXTRA_SLICES \
-      base-files_base \
-      base-files_release-info \
-      bash_bins \
-      ca-certificates_data \
-      libstdc++6_libs \
-      libgomp1_libs \
-      openssl_config \
-      python${PYTHON_VERSION}_standard \
-      python${PYTHON_VERSION}-venv_ensurepip
+        base-files_base \
+        base-files_release-info \
+        bash_bins \
+        ca-certificates_data \
+        libstdc++6_libs \
+        libgomp1_libs \
+        openssl_config \
+        python${PYTHON_VERSION}_standard \
+        python${PYTHON_VERSION}-venv_ensurepip \
+        python-pip-whl_wheels \
+        python3-distutils_python3-8
 
-RUN python3.8 -m venv --copies /opt/venv \
+RUN python${PYTHON_VERSION} -m venv --copies /opt/venv \
     && source /opt/venv/bin/activate \
-    && python3.8 -m pip install wheel \
+    && python${PYTHON_VERSION} -m pip install wheel \
     && mkdir -p /rootfs/opt/venv/ \
     && cp -r /opt/venv/ /rootfs/opt/
 
@@ -64,5 +70,3 @@ ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY --from=builder /rootfs /
-COPY --from=builder /usr/share/python-wheels/ /usr/share/python-wheels/
-COPY --from=builder /usr/lib/python${PYTHON_VERSION}/distutils/ /usr/lib/python${PYTHON_VERSION}/distutils/
